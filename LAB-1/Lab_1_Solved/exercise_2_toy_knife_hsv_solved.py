@@ -3,21 +3,24 @@
 
 # Put your import statements up here
 import cv2
-from matplotlib import pyplot as plt
 import numpy as np
+import imageio.v3 as iio
+
 
 def main():
     # ---------------------------------------------------------------- #
     # (1) Load "toy_knife.jpg"
+
+    # One option: use ImageIO (loads RGB) and use cv2 to convert to BGR.
+    # original = iio.imread("toy_knife.jpg")
+    # original = cv2.cvtColor(original, cv2.COLOR_RGB2BGR)
+
+    # Another option: use the cv2 load function (loads as BGR, doesn't work with video).
+    original = cv2.imread("toy_knife.jpg")
+
     # (2) Make a copy that has half the values of the original.
+    dimmed = original / 2
 
-    # Your code here
-    toy_knife = cv2.imread("toy_knife.jpg")
-    half_value = toy_knife.copy()
-
-    half_value[:,:,0] = toy_knife[:,:,0]/2
-    half_value[:,0,:] = toy_knife[:,0,:]/2
-    half_value[0,:,:] = toy_knife[0,:,:]/2
     # ---------------------------------------------------------------- #
 
     cv2.namedWindow("Color Picker")
@@ -45,26 +48,27 @@ def main():
         # (3) Create an image that is twice as wide as the original.
         #     The left side must contain the pixels from the original image,
         #     and the right pixels must contain the pixels from the half-intensity image.
+        (h, w, c) = original.shape
+        masked = np.zeros_like(original, shape=(h, w*2, c))
+        masked[:, :w, :] = original
+        masked[:, w:, :] = dimmed
+
         # (4) Convert the wide image to HSV using OpenCV.
+        hsv = cv2.cvtColor(masked, cv2.COLOR_RGB2HSV)
+
         # (5) Mask the wide image like you did in the RGB exercise,
         # BUT this time use the HSV values for masking.
-        # (6) Display the masked image in the CV2 window "Color Picker".
+        masked[hsv[:,:,0] < min_values[0]] = 0
+        masked[hsv[:,:,1] < min_values[1]] = 0
+        masked[hsv[:,:,2] < min_values[2]] = 0
 
-        # Your code here
-        measures = toy_knife.shape
-        wide_image = np.zeros((measures[0], measures[1]*2, 3), dtype=np.uint8)
-        wide_image[0:measures[0],0:measures[1]] = toy_knife
-        wide_image[0:measures[0],measures[1]:measures[1]*2] = half_value
+        masked[hsv[:,:,0] > max_values[0]] = 0
+        masked[hsv[:,:,1] > max_values[1]] = 0
+        masked[hsv[:,:,2] > max_values[2]] = 0
 
-        hsv_image = cv2.cvtColor(wide_image, cv2.COLOR_BGR2HSV)
-        
-        mask = ((hsv_image[:, :, 0] < 20) | (hsv_image[:, :, 0] > 200) |
-            (hsv_image[:, :, 1] < 20) | (hsv_image[:, :, 1] > 200) |
-            (hsv_image[:, :, 2] < 20) | (hsv_image[:, :, 2] > 200))
+        # (5) Display the masked image in the CV2 window "Color Picker".
+        cv2.imshow("Color Picker", masked)
 
-        wide_image[mask] = 0
-
-        cv2.imshow("Wide Image",wide_image)
         # ---------------------------------------------------------------- #
 
         key = cv2.waitKey(1) & 0xFF
@@ -72,13 +76,19 @@ def main():
             break
 
     # ---------------------------------------------------------------- #
-    # (7) Save the masked image to "masked_hsv.jpg".
-    # (8) Print the `min_values` and `max_values`.
+    # (6) Save the masked image to "masked_hsv.jpg".
 
-    # Your code here
-    iio.imwrite("masked_hsv.jpg", wide_image)
-    print("Min" + wide_image.min())
-    print("Max" + wide_image.max())
+    # One option: convert back to RGB and use ImageIO.
+    # masked = cv2.cvtColor(masked, cv2.COLOR_BGR2RGB)
+    # iio.imwrite("masked_rgb.jpg", masked)
+
+    # Another option: Use the cv2 function (expects BGR, doesn't work with video).
+    cv2.imwrite("masked_rgb.jpg", masked)
+
+    # (7) Print the `min_values` and `max_values`.
+    print(f"Min Values (HSV): {min_values}")
+    print(f"Max Values (HSV): {max_values}")
+
     # ---------------------------------------------------------------- #
 
 
