@@ -1,0 +1,39 @@
+\documentclass[11pt]{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with`a4paper' for UK/EU standard size
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Assignment 1: Computer Vision}
+\author{Cristian Milego de Diego}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+In this assignment we have used the knowledge acquired in the laboratory session of the course Intelligent Interactive Systems to analyze the faces and emotions in some images. We have done this with the Python library ImageIO and OpenCV to process images and Py-Feat to analyze the faces and facial expressions. In this document we discuss a series of reflections about the project, its implications and its limitations.
+
+\section{Task 1: Face recognition and emotion analysis}
+
+Once the analysis has been done with Py-Feat library we can see that it is not always accurate the emotion label with the apparent emotion of the people in the photos. By the results we can see a pattern of the library having troubles identifying the emotion of faces that are not fully visible because they are blurry or because the people have their faces turned.
+
+However, there are some faces that have unclear emotions for the same reason. So even if the library have some clear mistakes there are some mistakes that are less obvious or that even humans can't determine if they are even mistakes.
+
+\section{Task 2: Analysis of AU data}
+
+Once we have produced the graph of the absolute difference in AU Means of the positive and negative valence, we can see that there diverse levels of difference. The AU that I would choose the AU with bigger difference because that means that there is a significant difference between the positive and negative indicators.
+
+It is important to choose a selection of features instead of all the features cause it can have computational problems for future analysis. This means that it can be hard to manage a bit amount of data for certain analysis models.
+
+\section{Conclusions}
+
+Py-Feat, ImageIO and OpenCV are very useful libraries for detecting emotions of faces in images. The advantage of these libraries is that you can save the results in different formats to treat the conclusions in different ways to obtain different types of results.
+
+\end{document}

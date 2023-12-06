@@ -5,22 +5,35 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import os
 import numpy as np
+import warnings
 
-images_folder = '/Users/crismilego/Desktop/LAB_Interactive/ASSIGNMENT-1/processed/images'
+warnings.filterwarnings("ignore")
+
+images_folder = '../processed/images'
 detector = Detector()
 emotion_labels = ["Anger", "Disgust", "Fear", "Happiness", "Sadness", "Surprise", "Neutral"]
 
-csv_file_path = '/Users/crismilego/Desktop/LAB_Interactive/ASSIGNMENT-1/processed/aus.csv'
+csv_file_path = '../processed/aus.csv'
 
 with open(csv_file_path, 'w', newline='') as csv_file:
     csv_writer = csv.writer(csv_file)
-    header_row = ['Filename', 'FaceIndex', 'AU1', 'AU2', 'AU4', 'AU5', 'AU6', 'AU7', 'AU9', 'AU10', 'AU12', 'AU14', 'AU15', 'AU17', 'AU20', 'AU23', 'AU24', 'AU25', 'AU26', 'AU28', 'AU43']
+    header_row = ['file', 'face', 'AU01', 'AU02','AU03', 'AU04', 'AU05', 'AU06', 'AU07', 'AU09', 'AU10', 'AU12', 'AU14', 'AU15', 'AU17', 'AU20', 'AU23', 'AU24', 'AU25', 'AU26', 'AU28', 'AU43']
     csv_writer.writerow(header_row)
 
     for filename in os.listdir(images_folder):
         file_path = os.path.join(images_folder, filename)
-        frame = cv2.imread(file_path)
 
+        if not file_path.lower().endswith(('.jpg', '.jpeg')):
+            print(f"Warning: Skipping non-JPEG file: {file_path}")
+            continue
+
+        if not os.path.exists(file_path):
+            print(f"Warning: Image file not found: {file_path}")
+            continue
+        
+        print(file_path)
+        frame = cv2.imread(file_path)
+        
         detected_faces = detector.detect_faces(frame)
         detected_landmarks = detector.detect_landmarks(frame, detected_faces)
         detected_emotions = detector.detect_emotions(frame, detected_faces, detected_landmarks)
